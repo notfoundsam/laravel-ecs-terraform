@@ -3,11 +3,11 @@
 Infrastructure for Laravel framework on AWS ECS
 See related project on [GitHub](https://github.com/notfoundsam/laravel-ecs-web)
 
-### Preparation
+### Requirements
 
 - Terraform v0.14.x
 - AWS account
-- Domain name (possible to create in AWS $12 per year)
+- Domain name (possible to create in AWS for $12 per year)
 
 ### Creating a cluster
 
@@ -29,3 +29,17 @@ See related project on [GitHub](https://github.com/notfoundsam/laravel-ecs-web)
 2. In `./web/production.tf` update `project_name` and `region` for `backend s3` and `terraform_remote_state` from step 2 of Creating a cluster.
 3. Change the directory to `cd web` and run `terraform init`.
 4. Run `terraform plan` to check is everything ok and run `terraform apply` to create services.
+
+### Specs
+
+- One t3.micro EC2 instance type for ECS cluster.
+- One t3.micro EC2 instance type for bastion server (off by default).
+- One Application Load Balancer with target groups for multiple environments.
+- One t3.micro RDS instance type.
+- Application environment varialbles are stored in AWS Systems Manager > Parameter Store.
+- SSL termination. Redirect http to https on ALB.
+- VPC with a public and DB network (private network is off by default).
+- Services are in a public network but they have access from ALB only.
+- Docker container logs will be stored in CloudWatch.
+- DB migration will be running on ECS Fargate.
+- Task definition includes two docker containers php-fpm and nginx.
